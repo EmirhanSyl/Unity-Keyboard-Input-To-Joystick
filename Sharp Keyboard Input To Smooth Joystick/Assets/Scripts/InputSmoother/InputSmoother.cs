@@ -1,16 +1,22 @@
 using UnityEngine;
 using TMPro;
 
-namespace InputSmoother
+namespace InputSmoothers
 {
     public class InputSmoother : MonoBehaviour
     {
-        [SerializeField] private TMP_Text xText;
-        [SerializeField] private TMP_Text yText;
+        [Header("Acceleration")]
+        [SerializeField] private bool accelerationActive = true;
+        [SerializeField] [Range(1, 10)] private float accelerationRange = 1;
+        [SerializeField] [Range(0, 1)] private float accelerationMultiplier = 0.5f;
 
-        [Space(10)]
+        
+        [Header("Smoothness")]
+        [Space(5)]
         [SerializeField] private float smoothnessRate;
-
+        
+        
+        //Private Variables
         private float xSmooth;
         private float ySmooth;
         private float accelerationRate_X = 1;
@@ -25,10 +31,7 @@ namespace InputSmoother
         void Update()
         {
             Smoother_X();
-            Smoother_Y();
-            
-            xText.text = xSmooth.ToString();
-            yText.text = ySmooth.ToString();            
+            Smoother_Y();        
         }
 
         void Smoother_Y()
@@ -43,9 +46,24 @@ namespace InputSmoother
                 {
                     ySmooth -= Time.deltaTime * smoothnessRate;
                 }
+
+                
+                if (!accelerationActive) return;
+
+                if (!StateChanged_Y)
+                {
+                    accelerationRate_Y = 1;
+                    StateChanged_Y = true;
+                }
+                else if (StateChanged_Y && accelerationRate_Y < accelerationRange)
+                {
+                    accelerationRate_Y += Time.deltaTime / accelerationMultiplier;
+                }
             }
             else
             {
+                StateChanged_Y = false;
+                
                 if (ySmooth < 0)
                 {
                     ySmooth += Time.deltaTime * smoothnessRate;
@@ -53,6 +71,10 @@ namespace InputSmoother
                 else if (ySmooth > 0)
                 {
                     ySmooth -= Time.deltaTime * smoothnessRate;
+                }
+                else
+                {
+                    ySmooth = 0;
                 }
             }
         }
@@ -63,15 +85,29 @@ namespace InputSmoother
             {
                 if (Input.GetKey(KeyCode.D) && xSmooth <= 1)
                 {
-                    xSmooth += Time.deltaTime * smoothnessRate;
+                    xSmooth += Time.deltaTime * smoothnessRate * accelerationRate_X;
                 }
                 else if (Input.GetKey(KeyCode.A) && xSmooth >= -1)
                 {
-                    xSmooth -= Time.deltaTime * smoothnessRate;
+                    xSmooth -= Time.deltaTime * smoothnessRate * accelerationRate_X;
+                }
+
+                if (!accelerationActive) return;
+                
+                if (!StateChanged_X)
+                {
+                    accelerationRate_X = 1;
+                    StateChanged_X = true;
+                }
+                else if(StateChanged_X && accelerationRate_X < accelerationRange)
+                {
+                    accelerationRate_X += Time.deltaTime / accelerationMultiplier;
                 }
             }
             else
             {
+                StateChanged_X = false;
+                
                 if (xSmooth < 0)
                 {
                     xSmooth += Time.deltaTime * smoothnessRate;
@@ -79,6 +115,10 @@ namespace InputSmoother
                 else if (xSmooth > 0)
                 {
                     xSmooth -= Time.deltaTime * smoothnessRate;
+                }
+                else
+                {
+                    xSmooth = 0;
                 }
             }
         }
