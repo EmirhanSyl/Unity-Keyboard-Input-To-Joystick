@@ -31,7 +31,9 @@ namespace InputSmoothers
         void Update()
         {
             Smoother_X();
-            Smoother_Y();        
+            Smoother_Y();
+
+            
         }
 
         void Smoother_Y()
@@ -40,11 +42,11 @@ namespace InputSmoothers
             {
                 if (Input.GetKey(KeyCode.W) && ySmooth <= 1)
                 {
-                    ySmooth += Time.deltaTime * smoothnessRate;
+                    ySmooth += Time.deltaTime * smoothnessRate * accelerationRate_Y;
                 }
                 else if (Input.GetKey(KeyCode.S) && ySmooth >= -1)
                 {
-                    ySmooth -= Time.deltaTime * smoothnessRate;
+                    ySmooth -= Time.deltaTime * smoothnessRate * accelerationRate_Y;
                 }
 
                 
@@ -72,7 +74,8 @@ namespace InputSmoothers
                 {
                     ySmooth -= Time.deltaTime * smoothnessRate;
                 }
-                else
+                
+                if (ySmooth < 0.05f && ySmooth > -0.05f)
                 {
                     ySmooth = 0;
                 }
@@ -116,10 +119,11 @@ namespace InputSmoothers
                 {
                     xSmooth -= Time.deltaTime * smoothnessRate;
                 }
-                else
+
+                if (xSmooth < 0.05f && xSmooth > -0.05f)
                 {
                     xSmooth = 0;
-                }
+                }                
             }
         }
         

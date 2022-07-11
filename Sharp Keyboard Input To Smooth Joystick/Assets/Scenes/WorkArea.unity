@@ -1385,7 +1385,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 962a302678f1ad54e93ef7b2349e4630, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  accelerationActive: 0
+  accelerationActive: 1
   accelerationRange: 3.76
   accelerationMultiplier: 0.5
   smoothnessRate: 0.2
